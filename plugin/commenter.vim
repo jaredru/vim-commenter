@@ -12,6 +12,9 @@ let g:loaded_commenter = 1
 " Commands
 "
 
+" unfortunately we can't utilize the range support on our functions, because
+" it will always move our cursor to the first character of the first line of
+" the range after executing it.
 command! -range Comment   call Commenter#Comment(<line1>, <line2>)
 command! -range Uncomment call Commenter#Uncomment(<line1>, <line2>)
 

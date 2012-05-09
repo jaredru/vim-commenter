@@ -8,20 +8,24 @@
 "
 
 function! Commenter#Comment(first, last)
-    let whitespaces = []
-
     " first we figure out how much whitespace to use.
-    " we want it aligned with the leasted indented line selected.
+    " we want it aligned with the least indented line selected.
+    let whitespace = 1000000
+
     for i in range(a:first, a:last)
         let line = getline(i)
 
+        " we don't care about empty lines
         if strlen(line)
-            call add(whitespaces, strlen(matchstr(getline(i), '^\s*')))
+            let current = strlen(matchstr(line, '^\s*'))
+            let whitespace = min([whitespace, current])
+
+            " break if we reach an unindented line
+            if !whitespace
+                break
+            endif
         endif
     endfor
-
-    " our whitespace will be the minimum of the valid lines
-    let whitespace = min(whitespaces)
 
     " break the comment string into pre and post parts
     let [pre, post] = split(substitute(substitute(&commentstring, '%s', ' %s', ''), '%s\ze.\+', '%s ', ''), '%s', 1)
