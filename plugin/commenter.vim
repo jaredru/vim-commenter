@@ -20,13 +20,13 @@ command! -range Uncomment call Commenter#Uncomment(<line1>, <line2>)
 "
 
 if !hasmapto(":Comment<CR>")
-    noremap  <unique> <silent> <C-K>      :Comment<CR>
+    nnoremap <unique> <silent> <C-K>      :Comment<CR>
     inoremap <unique> <silent> <C-K> <C-O>:Comment<CR>
     vnoremap <unique> <silent> <C-K>      :Comment<CR>gv
 endif
 
 if !hasmapto(":Uncomment<CR>")
-    noremap  <unique> <silent> <C-J>      :Uncomment<CR>
+    nnoremap <unique> <silent> <C-J>      :Uncomment<CR>
     inoremap <unique> <silent> <C-J> <C-O>:Uncomment<CR>
     vnoremap <unique> <silent> <C-J>      :Uncomment<CR>gv
 endif
