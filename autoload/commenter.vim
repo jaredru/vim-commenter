@@ -7,7 +7,11 @@
 " Functions
 "
 
-function! Commenter#Comment(first, last)
+function! s:commentParts()
+    return split(substitute(substitute(&commentstring, '%s', ' %s', ''), '%s\ze.', '%s ', ''), '%s', 1)
+endfunction
+
+function! commenter#comment(first, last)
     " first we figure out how much whitespace to use.
     " we want it aligned with the least indented line selected.
     let whitespace = 1000000
@@ -17,7 +21,7 @@ function! Commenter#Comment(first, last)
 
         " we don't care about empty lines
         if strlen(line)
-            let current = strlen(matchstr(line, '^\s*'))
+            let current    = strlen(matchstr(line, '^\s*'))
             let whitespace = min([whitespace, current])
 
             " break if we reach an unindented line
@@ -27,10 +31,9 @@ function! Commenter#Comment(first, last)
         endif
     endfor
 
-    " break the comment string into pre and post parts
-    let [pre, post] = split(substitute(substitute(&commentstring, '%s', ' %s', ''), '%s\ze.\+', '%s ', ''), '%s', 1)
+    " apply the comment string to every non-empty line
+    let [pre, post] = s:commentParts()
 
-    " apply it to every non-empty line
     for i in range(a:first, a:last)
         let line = getline(i)
 
@@ -40,11 +43,10 @@ function! Commenter#Comment(first, last)
     endfor
 endfunction
 
-function! Commenter#Uncomment(first, last)
-    " break the comment string into pre and post parts
-    let [pre, post] = split(substitute(substitute(&commentstring, '%s', ' %s', ''), '%s\ze.\+', '%s ', ''), '%s', 1)
+function! commenter#uncomment(first, last)
+    " remove the comment string from every line that matches it
+    let [pre, post] = s:commentParts()
 
-    " remove it from every line that matches it
     for i in range(a:first, a:last)
         let line = getline(i)
         let uncommented = substitute(line, '\V' . pre . '\(\.\{-}\)\s\*' . post . '\s\*\$', '\1', '')
@@ -56,3 +58,4 @@ function! Commenter#Uncomment(first, last)
 endfunction
 
 " vim:ft=vim:ff=unix
+
